@@ -21,18 +21,19 @@ const initialState: GlobalContextType = {
     theme: ThemeEnum.Light,
   },
 };
+let currentGlobal = initialState;
+type Resolver = (
+  global: GlobalContextType,
+  actions: any,
+  payload: any
+) => GlobalContextType;
+const actionHandlers: Record<string, Resolver> = {};
 
 const ThemeContext = createContext<GlobalContextType>(initialState);
 
-export type GlobalProviderProps = {
-  reducers: Record<
-    string,
-    (global: GlobalContextType, actions: any, payload: any) => GlobalContextType
-  >;
-};
+export type GlobalProviderProps = {};
 export const ThemeProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
   children,
-  reducers,
 }) => {
   const [globalState, setGlobalState] =
     useState<GlobalContextType>(initialState);
@@ -43,9 +44,10 @@ export const ThemeProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
     payload: any;
     action: string;
   }>) => {
-    const reducer = reducers[action];
-    const reducerResult = reducer(globalState, reducers, payload);
+    const reducer = actionHandlers[action];
+    const reducerResult = reducer(globalState, actionHandlers, payload);
     setGlobalState(reducerResult);
+    currentGlobal = reducerResult;
   };
   useEffect(() => {
     document.addEventListener("dispatch", onDispatch as AnyFunction);
@@ -71,6 +73,8 @@ export const useTheme = () => {
   return theme;
 };
 
+export const getGlobal = () => currentGlobal;
+
 export const dispatch = (action: string, payload: any) => {
   document.dispatchEvent(
     new CustomEvent("dispatch", {
@@ -80,4 +84,8 @@ export const dispatch = (action: string, payload: any) => {
       },
     })
   );
+};
+
+export const addActionHandler = (action: string, resolver: Resolver) => {
+  actionHandlers[action] = resolver;
 };
