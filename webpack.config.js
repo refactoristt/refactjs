@@ -1,5 +1,5 @@
-const path = require('path');
-const dotenv = require('dotenv');
+const path = require("path");
+const dotenv = require("dotenv");
 
 const {
   DefinePlugin,
@@ -7,47 +7,45 @@ const {
   ProvidePlugin,
   ContextReplacementPlugin,
   NormalModuleReplacementPlugin,
-} = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
-const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default;
-const appVersion = require('./package.json').version;
+} = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const { GitRevisionPlugin } = require("git-revision-webpack-plugin");
+const StatoscopeWebpackPlugin = require("@statoscope/webpack-plugin").default;
+const appVersion = require("./package.json").version;
 
-const {
-  APP_ENV = 'production',
-} = process.env;
+const { APP_ENV = "production" } = process.env;
 
 dotenv.config();
 
-const { BASE_URL = 'http://localhost:1234' } = process.env;
+const { BASE_URL = "http://localhost:1234" } = process.env;
 
-module.exports = (_env, { mode = 'production' }) => {
+module.exports = (_env, { mode = "production" }) => {
   return {
     mode,
-    entry: './src/index.tsx',
-    target: 'web',
+    entry: "./src/index.tsx",
+    target: "web",
 
     devServer: {
-      port: 1234,
-      host: '0.0.0.0',
+      port: 1111,
+      host: "0.0.0.0",
       allowedHosts: "all",
       hot: false,
       static: [
         {
-          directory: path.resolve(__dirname, 'public'),
-        }
+          directory: path.resolve(__dirname, "public"),
+        },
       ],
       devMiddleware: {
-        stats: 'minimal',
+        stats: "minimal",
       },
     },
 
     output: {
-      filename: '[name].[contenthash].js',
-      chunkFilename: '[id].[chunkhash].js',
-      assetModuleFilename: '[name].[contenthash][ext]',
-      path: path.resolve(__dirname, 'dist'),
+      filename: "[name].[contenthash].js",
+      chunkFilename: "[id].[chunkhash].js",
+      assetModuleFilename: "[name].[contenthash][ext]",
+      path: path.resolve(__dirname, "dist"),
       clean: true,
     },
 
@@ -55,7 +53,7 @@ module.exports = (_env, { mode = 'production' }) => {
       rules: [
         {
           test: /\.(ts|tsx|js)$/,
-          loader: 'babel-loader',
+          loader: "babel-loader",
           exclude: /node_modules/,
         },
         {
@@ -63,12 +61,12 @@ module.exports = (_env, { mode = 'production' }) => {
           use: [
             MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader',
+              loader: "css-loader",
               options: {
                 importLoaders: 1,
               },
             },
-            'postcss-loader',
+            "postcss-loader",
           ],
         },
         {
@@ -76,36 +74,37 @@ module.exports = (_env, { mode = 'production' }) => {
           use: [
             MiniCssExtractPlugin.loader,
             {
-              loader: 'css-loader',
+              loader: "css-loader",
               options: {
                 modules: {
-                  exportLocalsConvention: 'camelCase',
+                  exportLocalsConvention: "camelCase",
                   auto: true,
-                  localIdentName: mode === 'production' ? '[hash:base64]' : '[name]__[local]'
-                }
-              }
+                  localIdentName:
+                    mode === "production" ? "[hash:base64]" : "[name]__[local]",
+                },
+              },
             },
-            'postcss-loader',
-            'sass-loader',
+            "postcss-loader",
+            "sass-loader",
           ],
         },
         {
           test: /\.(woff(2)?|ttf|eot|svg|png|jpg|tgs)(\?v=\d+\.\d+\.\d+)?$/,
-          type: 'asset/resource',
+          type: "asset/resource",
         },
         {
           test: /\.wasm$/,
-          type: 'asset/resource',
+          type: "asset/resource",
         },
         {
           test: /\.(txt|tl)$/i,
-          type: 'asset/source',
+          type: "asset/source",
         },
       ],
     },
 
     resolve: {
-      extensions: ['.js', '.ts', '.tsx'],
+      extensions: [".js", ".ts", ".tsx"],
     },
 
     plugins: [
@@ -115,16 +114,24 @@ module.exports = (_env, { mode = 'production' }) => {
         /^((?!\.js\.js).)*$/
       ),
       new HtmlWebpackPlugin({
-        appName: APP_ENV === 'production' ? 'Refact.JS Web' : 'Refact.JS Web Beta',
-        appleIcon: APP_ENV === 'production' ? 'apple-touch-icon' : 'apple-touch-icon-dev',
-        mainIcon: APP_ENV === 'production' ? 'icon-192x192' : 'icon-dev-192x192',
-        manifest: APP_ENV === 'production' ? 'site.webmanifest' : 'site_dev.webmanifest',
+        appName:
+          APP_ENV === "production" ? "Refact.JS Web" : "Refact.JS Web Beta",
+        appleIcon:
+          APP_ENV === "production"
+            ? "apple-touch-icon"
+            : "apple-touch-icon-dev",
+        mainIcon:
+          APP_ENV === "production" ? "icon-192x192" : "icon-dev-192x192",
+        manifest:
+          APP_ENV === "production"
+            ? "site.webmanifest"
+            : "site_dev.webmanifest",
         baseUrl: BASE_URL,
-        template: 'src/index.html',
+        template: "src/index.html",
       }),
       new MiniCssExtractPlugin({
-        filename: '[name].[contenthash].css',
-        chunkFilename: '[name].[chunkhash].css',
+        filename: "[name].[contenthash].css",
+        chunkFilename: "[name].[chunkhash].css",
         ignoreOrder: true,
       }),
       new EnvironmentPlugin({
@@ -133,26 +140,26 @@ module.exports = (_env, { mode = 'production' }) => {
         APP_VERSION: appVersion,
       }),
       new ProvidePlugin({
-        Buffer: ['buffer', 'Buffer'],
+        Buffer: ["buffer", "Buffer"],
       }),
       new StatoscopeWebpackPlugin({
         statsOptions: {
           context: __dirname,
         },
-        saveReportTo: path.resolve('./public/bundle-report/report.html'),
-        saveStatsTo: path.resolve('./public/bundle-report/build-stats.json'),
+        saveReportTo: path.resolve("./public/bundle-report/report.html"),
+        saveStatsTo: path.resolve("./public/bundle-report/build-stats.json"),
         normalizeStats: true,
-        open: 'file',
+        open: "file",
         extensions: [],
       }),
     ],
 
-    devtool: 'source-map',
+    devtool: "source-map",
 
-    ...(APP_ENV !== 'production' && {
+    ...(APP_ENV !== "production" && {
       optimization: {
-        chunkIds: 'named',
-      }
+        chunkIds: "named",
+      },
     }),
   };
 };
