@@ -1,14 +1,18 @@
-import './util/handleError';
-import './util/setupServiceWorker';
+import "./util/handleError";
+import "./util/setupServiceWorker";
 
-import React from 'react';
-import DOM from 'react-dom';
+import React from "react";
+import DOM from "react-dom";
 
-import App from './App';
+import App from "./App";
+import { DEBUG } from "./config";
+import { Logger } from "./util/log";
+import { getGlobal } from "./global";
 
-// import './styles/index.scss';
+DOM.render(<App />, document.getElementById("root")!);
 
-DOM.render(
-  <App />,
-  document.getElementById('root')!,
-);
+if (DEBUG) {
+  document.addEventListener("dblclick", (e) => {
+    Logger.D(getGlobal());
+  });
+}

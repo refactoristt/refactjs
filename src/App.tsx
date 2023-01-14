@@ -1,7 +1,11 @@
 import type { FC } from "react";
 import React from "react";
 import { RegisterAsync } from "./components/auth/register/register.async";
-import { addActionHandler, GlobalProviderProps, ThemeProvider } from "./global";
+import {
+  addActionHandler,
+  GlobalProviderProps,
+  GlobalProvider,
+} from "./global";
 
 addActionHandler("SET_THEME", (global, actions, payload) => {
   return {
@@ -15,9 +19,9 @@ addActionHandler("SET_THEME", (global, actions, payload) => {
 type StateProps = {};
 const App: FC<StateProps> = ({}) => {
   return (
-    <ThemeProvider>
+    <GlobalProvider>
       <RegisterAsync />;
-    </ThemeProvider>
+    </GlobalProvider>
   );
 };
 

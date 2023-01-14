@@ -6,33 +6,20 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import {
+  GLOBAL_DISPATCH_KEY,
+  GlobalContextType,
+  GlobalProviderProps,
+  initialState,
+  Resolver,
+} from "./types";
 
-enum ThemeEnum {
-  Light = "LIGHT",
-  Dark = "DARK",
-}
-type GlobalContextType = {
-  setting: {
-    theme: ThemeEnum;
-  };
-};
-const initialState: GlobalContextType = {
-  setting: {
-    theme: ThemeEnum.Light,
-  },
-};
 let currentGlobal = initialState;
-type Resolver = (
-  global: GlobalContextType,
-  actions: any,
-  payload: any
-) => GlobalContextType;
 const actionHandlers: Record<string, Resolver> = {};
 
-const ThemeContext = createContext<GlobalContextType>(initialState);
+const GlobalContext = createContext<GlobalContextType>(initialState);
 
-export type GlobalProviderProps = {};
-export const ThemeProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
+export const GlobalProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
   children,
 }) => {
   const [globalState, setGlobalState] =
@@ -50,22 +37,22 @@ export const ThemeProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
     currentGlobal = reducerResult;
   };
   useEffect(() => {
-    document.addEventListener("dispatch", onDispatch as AnyFunction);
+    document.addEventListener(GLOBAL_DISPATCH_KEY, onDispatch as AnyFunction);
 
     return () => {
-      document.removeEventListener("dispatch", () => {});
+      document.removeEventListener(GLOBAL_DISPATCH_KEY, () => {});
     };
   }, []);
 
   return (
-    <ThemeContext.Provider value={globalState}>
+    <GlobalContext.Provider value={globalState}>
       {children}
-    </ThemeContext.Provider>
+    </GlobalContext.Provider>
   );
 };
 
-export const useTheme = () => {
-  const theme = useContext(ThemeContext);
+export const useGlobal = () => {
+  const theme = useContext(GlobalContext);
 
   if (!theme)
     throw new Error("You must use theme hook as a child of theme provider");
@@ -77,7 +64,7 @@ export const getGlobal = () => currentGlobal;
 
 export const dispatch = (action: string, payload: any) => {
   document.dispatchEvent(
-    new CustomEvent("dispatch", {
+    new CustomEvent(GLOBAL_DISPATCH_KEY, {
       detail: {
         action,
         payload,
