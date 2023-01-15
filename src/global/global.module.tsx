@@ -14,21 +14,20 @@ import {
   GLOBAL_DISPATCH_KEY,
   GlobalContextType,
   GlobalProviderProps,
-  initialState,
 } from "./global.types";
 import { $withGlobal } from "./global.hoc";
+import { INITIAL_STATE } from "./global.initial";
 
-let currentGlobal = initialState;
+let currentGlobal = INITIAL_STATE;
 const actionHandlers: Record<string, ActionHandler> = {};
 const actions: Record<string, ActionFunc> = {};
 
-const GlobalContext = createContext<GlobalContextType>(initialState);
+const GlobalContext = createContext<GlobalContextType>(INITIAL_STATE);
 
-export const GlobalProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
-  children,
-}) => {
-  const [globalState, setGlobalState] =
-    useState<GlobalContextType>(initialState);
+export const GlobalProvider: <T extends Object>(
+  props: GlobalProviderProps<T>
+) => React.ReactElement<GlobalProviderProps<T>> = ({ children }) => {
+  const [globalState, setGlobalState] = useState(INITIAL_STATE);
 
   const onDispatch = async ({
     detail: { action, payload },
@@ -61,7 +60,7 @@ export const GlobalProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
   );
 };
 
-export const useGlobal = () => {
+export const $useGlobalSelector = () => {
   const theme = useContext(GlobalContext);
 
   if (!theme)
@@ -123,7 +122,7 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
       action: ActionName,
       resolver: ActionHandlers[ActionName]
     ) => void,
-    useGlobal,
+    useGlobal: $useGlobalSelector,
     dispatch: $dispatch,
     withGlobal: $withGlobal as unknown as <StateProps = any, OwnProps = any>(
       cb: (
@@ -132,5 +131,6 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
       ) => StateProps & OwnProps
     ) => (WrappedComponent: any) => any,
     getActions: $getActions as () => Actions,
+    GlobalProvider: GlobalProvider,
   };
 };

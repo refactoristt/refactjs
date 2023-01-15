@@ -1,3 +1,5 @@
+import { PropsWithChildren } from "react";
+
 export const GLOBAL_DISPATCH_KEY = "global__dispatch";
 export enum ThemeEnum {
   Light = "LIGHT",
@@ -8,7 +10,9 @@ export type GlobalContextType = {
     theme: ThemeEnum;
   };
 };
-export type GlobalProviderProps = {};
+export interface GlobalProviderProps<G = any> extends PropsWithChildren {
+  initialState: G;
+}
 export type ActionNames = string;
 export type ActionPayload = any;
 export interface ActionOptions {}
@@ -17,12 +21,6 @@ export type ActionHandler = (
   actions: Record<ActionNames, ActionHandler>,
   payload: ActionPayload
 ) => GlobalContextType | void | Promise<void>;
-
-export const initialState: GlobalContextType = {
-  setting: {
-    theme: ThemeEnum.Light,
-  },
-};
 
 export type NonTypedActionNames = {};
 export type ActionPayloads = Record<string, ActionHandler>;
