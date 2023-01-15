@@ -18,3 +18,4 @@ export const addActionHandler = typed.addActionHandler;
 export const useGlobal = typed.useGlobal;
 export const dispatch = typed.dispatch;
 export const getActions = typed.getActions;
+export const withGlobal = typed.withGlobal;

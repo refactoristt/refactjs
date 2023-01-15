@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { dispatch, getActions, getGlobal } from "../../../global";
-import { withGlobal } from "../../../global/global.hoc";
+import { withGlobal } from "../../../global";
 import { ThemeEnum } from "../../../global/global.types";
 
 type StateProps = { theme: ThemeEnum };

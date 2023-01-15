@@ -4,6 +4,8 @@ import "./util/setupServiceWorker";
 import React from "react";
 import DOM from "react-dom";
 
+import "./global";
+
 import App from "./App";
 import { DEBUG } from "./config";
 import { Logger } from "./util/log";

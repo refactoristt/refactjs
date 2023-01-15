@@ -17,6 +17,7 @@ import {
   GlobalProviderProps,
   initialState,
 } from "./global.types";
+import { withGlobal } from "./global.hoc";
 
 let currentGlobal = initialState;
 const actionHandlers: Record<string, ActionHandler> = {};
@@ -127,6 +128,12 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
     ) => void,
     useGlobal,
     dispatch,
+    withGlobal: withGlobal as unknown as <StateProps = any, OwnProps = any>(
+      cb: (
+        globalContextType: GLOBAL,
+        ownProps: OwnProps
+      ) => StateProps & OwnProps
+    ) => (WrappedComponent: any) => any,
     getActions: getActions as () => Actions,
   };
 };
