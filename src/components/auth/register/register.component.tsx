@@ -1,15 +1,17 @@
 import React from "react";
 import { dispatch, getGlobal } from "../../../global";
 import { withGlobal } from "../../../global/global.hoc";
-import { GlobalContextType } from "../../../global/global.types";
+import { ThemeEnum } from "../../../global/global.types";
 
-type Props = {} & GlobalContextType;
-const RegisterComponent = ({ setting: { theme } }: Props) => {
+type StateProps = { theme: ThemeEnum };
+type OwnProps = {};
+type CombineProps = StateProps & OwnProps;
+const RegisterComponent = ({ theme }: CombineProps) => {
   const onClick = () => {
-    if (theme === "DARK") {
+    if (theme === ThemeEnum.Dark) {
       dispatch("SET_THEME", "LIGHT");
     }
-    if (theme === "LIGHT") {
+    if (theme === ThemeEnum.Light) {
       dispatch("SET_THEME", "DARK");
     }
     setTimeout(() => {
@@ -24,4 +26,9 @@ const RegisterComponent = ({ setting: { theme } }: Props) => {
   );
 };
 
-export default withGlobal(RegisterComponent);
+export default withGlobal<StateProps, OwnProps>(
+  (global, ownProps): CombineProps => ({
+    theme: global.setting.theme,
+    ...ownProps,
+  })
+)(RegisterComponent);
