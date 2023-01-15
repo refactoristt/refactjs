@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { dispatch, getActions, getGlobal } from "../../../global";
 import { withGlobal } from "../../../global/global.hoc";
 import { ThemeEnum } from "../../../global/global.types";
@@ -6,7 +6,7 @@ import { ThemeEnum } from "../../../global/global.types";
 type StateProps = { theme: ThemeEnum };
 type OwnProps = {};
 type CombineProps = StateProps & OwnProps;
-const RegisterComponent = ({ theme }: CombineProps) => {
+const RegisterComponent: FC<CombineProps> = ({ theme }) => {
   const onClick = () => {
     if (theme === ThemeEnum.Dark) {
       getActions().setTheme(ThemeEnum.Light);

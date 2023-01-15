@@ -2,20 +2,21 @@ import React from "react";
 import { GlobalContextType } from "./global.types";
 import { useGlobal } from "./index";
 
-type WithGlobalProps = GlobalContextType;
-
-export function withGlobal<T extends AnyLiteral, O = AnyLiteral>(
-  cb: (global: GlobalContextType, ownProps: O) => any
+export function withGlobal<
+  StateProps extends AnyLiteral,
+  OwnProps = AnyLiteral
+>(
+  cb: (global: GlobalContextType, ownProps: OwnProps) => StateProps & OwnProps
 ) {
-  return (WrappedComponent: React.ComponentType<T & O>) => {
+  return (WrappedComponent: React.ComponentType<OwnProps & StateProps>) => {
     const displayName =
       WrappedComponent.displayName || WrappedComponent.name || "Component";
 
-    const ComponentWithTheme = (props: Omit<T, keyof WithGlobalProps>) => {
+    const ComponentWithTheme = (props: OwnProps) => {
       const useGlobalProps = useGlobal();
-      const finalProps = cb(useGlobalProps, props as O);
+      const finalProps = cb(useGlobalProps, props as OwnProps);
 
-      return <WrappedComponent {...(finalProps as T & O)} />;
+      return <WrappedComponent {...(finalProps as StateProps & OwnProps)} />;
     };
 
     ComponentWithTheme.displayName = `withGlobal(${displayName})`;
