@@ -7,7 +7,7 @@ import DOM from "react-dom";
 import App from "./App";
 import { DEBUG } from "./config";
 import { Logger } from "./util/log";
-import { getGlobal } from "./global";
+import { getGlobal } from "./global/global.module";
 
 DOM.render(<App />, document.getElementById("root")!);
 

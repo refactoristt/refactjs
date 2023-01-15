@@ -7,12 +7,12 @@ export class Logger {
 
   //Warning
   static W(...args: Args) {
-    console.warn("[☸Refact Warning]", ...args);
+    console.warn("[☸Refact]", ...args);
   }
 
   //Debug
   static D(...args: Args) {
-    console.debug("[☸Refact Debug]", ...args);
+    console.debug("[☸Refact]", ...args);
   }
 
   //Log

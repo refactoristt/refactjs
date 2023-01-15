@@ -7,15 +7,15 @@ import React, {
   useState,
 } from "react";
 import {
+  ActionHandler,
   GLOBAL_DISPATCH_KEY,
   GlobalContextType,
   GlobalProviderProps,
   initialState,
-  Resolver,
-} from "./types";
+} from "./global.types";
 
 let currentGlobal = initialState;
-const actionHandlers: Record<string, Resolver> = {};
+const actionHandlers: Record<string, ActionHandler> = {};
 
 const GlobalContext = createContext<GlobalContextType>(initialState);
 
@@ -25,16 +25,21 @@ export const GlobalProvider: FC<PropsWithChildren<GlobalProviderProps>> = ({
   const [globalState, setGlobalState] =
     useState<GlobalContextType>(initialState);
 
-  const onDispatch = ({
+  const onDispatch = async ({
     detail: { action, payload },
   }: CustomEvent<{
     payload: any;
     action: string;
   }>) => {
     const reducer = actionHandlers[action];
-    const reducerResult = reducer(globalState, actionHandlers, payload);
-    setGlobalState(reducerResult);
-    currentGlobal = reducerResult;
+    let reducerResult = reducer(globalState, actionHandlers, payload);
+    if (reducerResult instanceof Promise) {
+      reducerResult = await reducerResult;
+    }
+    if (reducerResult) {
+      setGlobalState(reducerResult);
+      currentGlobal = reducerResult;
+    }
   };
   useEffect(() => {
     document.addEventListener(GLOBAL_DISPATCH_KEY, onDispatch as AnyFunction);
@@ -60,7 +65,9 @@ export const useGlobal = () => {
   return theme;
 };
 
-export const getGlobal = () => currentGlobal;
+export function getGlobal<T>() {
+  return currentGlobal as T;
+}
 
 export const dispatch = (action: string, payload: any) => {
   document.dispatchEvent(
@@ -73,6 +80,30 @@ export const dispatch = (action: string, payload: any) => {
   );
 };
 
-export const addActionHandler = (action: string, resolver: Resolver) => {
+export const addActionHandler = (action: string, resolver: ActionHandler) => {
   actionHandlers[action] = resolver;
+};
+
+export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
+  type CombineActions = ACTIONS & UNTYPED_ACTIONS;
+  type CombineActionNames = keyof CombineActions;
+  type ActionHandlers = {
+    [ActionName in keyof CombineActions]: (
+      global: GLOBAL,
+      actions: Record<string, ActionHandler>,
+      payload: CombineActions[ActionName]
+    ) => GLOBAL | void | Promise<void>;
+  };
+
+  return {
+    getGlobal: getGlobal as () => GLOBAL,
+    addActionHandler: addActionHandler as <
+      ActionName extends CombineActionNames
+    >(
+      action: ActionName,
+      resolver: ActionHandlers[ActionName]
+    ) => void,
+    useGlobal,
+    dispatch,
+  };
 };

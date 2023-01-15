@@ -9,15 +9,20 @@ export type GlobalContextType = {
   };
 };
 export type GlobalProviderProps = {};
-
-export type Resolver = (
+type ActionNames = string;
+type ActionPayload = any;
+interface ActionOptions {}
+export type ActionHandler = (
   global: GlobalContextType,
-  actions: any,
-  payload: any
-) => GlobalContextType;
+  actions: Record<ActionNames, ActionHandler>,
+  payload: ActionPayload
+) => GlobalContextType | void | Promise<void>;
 
 export const initialState: GlobalContextType = {
   setting: {
     theme: ThemeEnum.Light,
   },
 };
+
+export type NonTypedActionNames = {};
+export type ActionPayloads = Record<string, ActionHandler>;
