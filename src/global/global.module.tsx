@@ -11,13 +11,12 @@ import {
   ActionHandler,
   ActionOptions,
   ActionPayload,
-  ActionPayloads,
   GLOBAL_DISPATCH_KEY,
   GlobalContextType,
   GlobalProviderProps,
   initialState,
 } from "./global.types";
-import { withGlobal } from "./global.hoc";
+import { $withGlobal } from "./global.hoc";
 
 let currentGlobal = initialState;
 const actionHandlers: Record<string, ActionHandler> = {};
@@ -71,11 +70,11 @@ export const useGlobal = () => {
   return theme;
 };
 
-export function getGlobal<T>() {
+export function $getGlobal<T>() {
   return currentGlobal as T;
 }
 
-export const dispatch = (action: string, payload: any) => {
+export const $dispatch = (action: string, payload: any) => {
   document.dispatchEvent(
     new CustomEvent(GLOBAL_DISPATCH_KEY, {
       detail: {
@@ -86,19 +85,17 @@ export const dispatch = (action: string, payload: any) => {
   );
 };
 
-export const addActionHandler = (
+export const $addActionHandler = (
   actionName: string,
   resolver: ActionHandler
 ) => {
   actionHandlers[actionName] = resolver;
   actions[actionName] = (payload?: ActionPayload, options?: ActionOptions) => {
-    dispatch(actionName, payload);
+    $dispatch(actionName, payload);
   };
 };
 
-// type GetActionFunc = (payload) => void
-export const getActions = () => {
-  console.log("GetActions Called", actions);
+export const $getActions = () => {
   return actions;
 };
 
@@ -119,21 +116,21 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
   };
 
   return {
-    getGlobal: getGlobal as () => GLOBAL,
-    addActionHandler: addActionHandler as <
+    getGlobal: $getGlobal as () => GLOBAL,
+    addActionHandler: $addActionHandler as <
       ActionName extends CombineActionNames
     >(
       action: ActionName,
       resolver: ActionHandlers[ActionName]
     ) => void,
     useGlobal,
-    dispatch,
-    withGlobal: withGlobal as unknown as <StateProps = any, OwnProps = any>(
+    dispatch: $dispatch,
+    withGlobal: $withGlobal as unknown as <StateProps = any, OwnProps = any>(
       cb: (
         globalContextType: GLOBAL,
         ownProps: OwnProps
       ) => StateProps & OwnProps
     ) => (WrappedComponent: any) => any,
-    getActions: getActions as () => Actions,
+    getActions: $getActions as () => Actions,
   };
 };

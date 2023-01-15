@@ -2,7 +2,7 @@ import React from "react";
 import { GlobalContextType } from "./global.types";
 import { useGlobal } from "./index";
 
-export function withGlobal<
+export function $withGlobal<
   StateProps extends AnyLiteral,
   OwnProps = AnyLiteral
 >(

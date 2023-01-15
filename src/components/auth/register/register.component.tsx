@@ -1,7 +1,6 @@
 import React, { FC } from "react";
-import { dispatch, getActions, getGlobal } from "../../../global";
-import { withGlobal } from "../../../global";
 import { ThemeEnum } from "../../../global/global.types";
+import { getActions, getGlobal, withGlobal } from "../../../global";
 
 type StateProps = { theme: ThemeEnum };
 type OwnProps = {};
@@ -14,9 +13,6 @@ const RegisterComponent: FC<CombineProps> = ({ theme }) => {
     if (theme === ThemeEnum.Light) {
       getActions().setTheme(ThemeEnum.Dark);
     }
-    setTimeout(() => {
-      console.log(getGlobal());
-    }, 2000);
   };
   return (
     <div>
