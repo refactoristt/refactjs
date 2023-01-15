@@ -1,11 +1,10 @@
 import React, { FC } from "react";
-import { RegisterComponent } from "./register.component";
+import RegisterComponent from "./register.component";
 import { useGlobal } from "../../../global";
 
 type Props = {};
 const RegisterContainer: FC<Props> = (props) => {
-  const globalState = useGlobal();
-  return <RegisterComponent theme={globalState.setting.theme} />;
+  return <RegisterComponent />;
 };
 
 export default RegisterContainer;

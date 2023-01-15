@@ -1,15 +1,15 @@
-import * as React from "react";
+import React from "react";
 import { dispatch, getGlobal } from "../../../global";
+import { withGlobal } from "../../../global/global.hoc";
+import { GlobalContextType } from "../../../global/global.types";
 
-type Props = {
-  theme: string;
-};
-export const RegisterComponent = (props: Props) => {
+type Props = {} & GlobalContextType;
+const RegisterComponent = ({ setting: { theme } }: Props) => {
   const onClick = () => {
-    if (props.theme === "DARK") {
+    if (theme === "DARK") {
       dispatch("SET_THEME", "LIGHT");
     }
-    if (props.theme === "LIGHT") {
+    if (theme === "LIGHT") {
       dispatch("SET_THEME", "DARK");
     }
     setTimeout(() => {
@@ -19,7 +19,9 @@ export const RegisterComponent = (props: Props) => {
   return (
     <div>
       This is Register Component and Theme is
-      <button onClick={() => onClick()}>Dispatch</button> {props.theme}
+      <button onClick={() => onClick()}>Dispatch</button> {theme}
     </div>
   );
 };
+
+export default withGlobal(RegisterComponent);
