@@ -7,7 +7,11 @@ import React, {
   useState,
 } from "react";
 import {
+  ActionFunc,
   ActionHandler,
+  ActionOptions,
+  ActionPayload,
+  ActionPayloads,
   GLOBAL_DISPATCH_KEY,
   GlobalContextType,
   GlobalProviderProps,
@@ -16,6 +20,7 @@ import {
 
 let currentGlobal = initialState;
 const actionHandlers: Record<string, ActionHandler> = {};
+const actions: Record<string, ActionFunc> = {};
 
 const GlobalContext = createContext<GlobalContextType>(initialState);
 
@@ -80,8 +85,20 @@ export const dispatch = (action: string, payload: any) => {
   );
 };
 
-export const addActionHandler = (action: string, resolver: ActionHandler) => {
-  actionHandlers[action] = resolver;
+export const addActionHandler = (
+  actionName: string,
+  resolver: ActionHandler
+) => {
+  actionHandlers[actionName] = resolver;
+  actions[actionName] = (payload?: ActionPayload, options?: ActionOptions) => {
+    dispatch(actionName, payload);
+  };
+};
+
+// type GetActionFunc = (payload) => void
+export const getActions = () => {
+  console.log("GetActions Called", actions);
+  return actions;
 };
 
 export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
@@ -94,6 +111,11 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
       payload: CombineActions[ActionName]
     ) => GLOBAL | void | Promise<void>;
   };
+  type Actions = {
+    [ActionName in keyof CombineActions]: (
+      payload: CombineActions[ActionName]
+    ) => void;
+  };
 
   return {
     getGlobal: getGlobal as () => GLOBAL,
@@ -105,5 +127,6 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
     ) => void,
     useGlobal,
     dispatch,
+    getActions: getActions as () => Actions,
   };
 };

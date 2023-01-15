@@ -1,5 +1,5 @@
 import React from "react";
-import { dispatch, getGlobal } from "../../../global";
+import { dispatch, getActions, getGlobal } from "../../../global";
 import { withGlobal } from "../../../global/global.hoc";
 import { ThemeEnum } from "../../../global/global.types";
 
@@ -9,10 +9,10 @@ type CombineProps = StateProps & OwnProps;
 const RegisterComponent = ({ theme }: CombineProps) => {
   const onClick = () => {
     if (theme === ThemeEnum.Dark) {
-      dispatch("SET_THEME", "LIGHT");
+      getActions().setTheme(ThemeEnum.Light);
     }
     if (theme === ThemeEnum.Light) {
-      dispatch("SET_THEME", "DARK");
+      getActions().setTheme(ThemeEnum.Dark);
     }
     setTimeout(() => {
       console.log(getGlobal());

@@ -1,9 +1,10 @@
 import type { FC } from "react";
 import React from "react";
 import { RegisterAsync } from "./components/auth/register/register.async";
-import { addActionHandler, GlobalProvider } from "./global/global.module";
+import { GlobalProvider } from "./global/global.module";
+import { addActionHandler } from "./global";
 
-addActionHandler("SET_THEME", (global, actions, payload) => {
+addActionHandler("setTheme", (global, actions, payload) => {
   return {
     ...global,
     setting: {

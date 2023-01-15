@@ -9,9 +9,9 @@ export type GlobalContextType = {
   };
 };
 export type GlobalProviderProps = {};
-type ActionNames = string;
-type ActionPayload = any;
-interface ActionOptions {}
+export type ActionNames = string;
+export type ActionPayload = any;
+export interface ActionOptions {}
 export type ActionHandler = (
   global: GlobalContextType,
   actions: Record<ActionNames, ActionHandler>,
@@ -26,3 +26,8 @@ export const initialState: GlobalContextType = {
 
 export type NonTypedActionNames = {};
 export type ActionPayloads = Record<string, ActionHandler>;
+
+export type ActionFunc = (
+  payload?: ActionPayload,
+  options?: ActionOptions
+) => void;
