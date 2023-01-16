@@ -7,11 +7,8 @@
     "dev": "webpack serve --mode development",
     "build:dev": "webpack --mode development",
     "build:prod": "webpack --mode production",
-    "test": "jest --verbose --silent --forceExit"
-  },
-  "engines": {
-    "node": "^16",
-    "npm": "^9"
+    "test": "jest --verbose --silent --forceExit",
+    "refact:cc": "node ./scripts --c"
   },
   "husky": {
     "hooks": {
@@ -70,6 +67,7 @@
     "jest-environment-jsdom": "^29.3.1",
     "lint-staged": "^13.0.4",
     "mini-css-extract-plugin": "^2.7.1",
+    "minimist": "^1.2.7",
     "postcss-loader": "^7.0.1",
     "postcss-modules": "^6.0.0",
     "sass": "^1.56.1",

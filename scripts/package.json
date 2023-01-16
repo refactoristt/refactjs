@@ -1,0 +1,8 @@
+{
+  "name": "refact-cli",
+  "version": "0.0.1",
+  "main": "index.js",
+  "exports": "./index.js",
+  "engines": ">=14.16",
+  "type": "module"
+}
