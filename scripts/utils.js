@@ -1,19 +1,30 @@
+#!/usr/bin/env node
+
+import emoji from "node-emoji";
+import Table from "cli-table3";
+import Chalk from "chalk";
+
 function printHelp() {
-  console.log(
-    `
-    refact-cli [-h | --help] [--cc]
-
-    🤩 Fantastic Cli For Refact.JS Member !
-
-    Variables:
-
-    🛠️Options:
-    --help, -h               Print this help message
-
-    ✏Component:
-    --create-component,-cc   Create Component With (.component,.container,.async) and Bundle Export !
-    `
+  const commandTable = new Table({
+    head: ["Command", "Description"],
+    colWidths: [20, 50],
+  });
+  commandTable.push(
+    ["-help --h", "display help and command lists of refact.js cli"],
+    [
+      "-create-component --cc",
+      "Create Component With (.component,.container,.async) and Bundle Export !",
+    ]
   );
+
+  console.info(
+    "Drink Your Coffe its first of Refact.JS !!! ",
+    emoji.get(`coffe`),
+    "\n",
+    Chalk.bgBlue("Hello and Welcome to Refact.js"),
+    `\nawesome cli For ${Chalk.blue("Refact.JS")} Member`
+  );
+  console.log(commandTable.toString());
 }
 
 function showError(reason, options = {}) {
@@ -30,8 +41,4 @@ function showInfoMessage(msg) {
   console.log("\x1b[36m%s\x1b[0m", msg);
 }
 
-export {
-  printHelp,
-  showError,
-  showInfoMessage,
-};
+export { printHelp, showError, showInfoMessage };
