@@ -19,6 +19,7 @@ type StateProps = {};
 const App: FC<StateProps> = ({}) => {
   return (
     <GlobalProvider<GlobalContextType> initialState={INITIAL_STATE}>
+      aSalamBC
       <RegisterAsync />;
     </GlobalProvider>
   );

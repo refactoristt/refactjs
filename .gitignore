@@ -6,3 +6,4 @@ tests/
 *.iml
 public/bundle-report
 dist
+cli
