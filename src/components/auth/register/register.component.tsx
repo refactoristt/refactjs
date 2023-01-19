@@ -1,17 +1,16 @@
 import React, { FC } from "react";
-import { ThemeEnum } from "../../../global/global.types";
-import { getActions, getGlobal, withGlobal } from "../../../global";
+import { getActions, GlobalState, withGlobal } from "../../../global";
 
-type StateProps = { theme: ThemeEnum };
+type StateProps = Pick<GlobalState, "theme">;
 type OwnProps = {};
 type CombineProps = StateProps & OwnProps;
 const RegisterComponent: FC<CombineProps> = ({ theme }) => {
   const onClick = () => {
-    if (theme === ThemeEnum.Dark) {
-      getActions().setTheme(ThemeEnum.Light);
+    if (theme === "dark") {
+      getActions().setTheme("light");
     }
-    if (theme === ThemeEnum.Light) {
-      getActions().setTheme(ThemeEnum.Dark);
+    if (theme === "light") {
+      getActions().setTheme("dark");
     }
   };
   return (
@@ -24,7 +23,7 @@ const RegisterComponent: FC<CombineProps> = ({ theme }) => {
 
 export default withGlobal<StateProps, OwnProps>(
   (global, ownProps): CombineProps => ({
-    theme: global.setting.theme,
+    theme: global.theme,
     ...ownProps,
   })
 )(RegisterComponent);

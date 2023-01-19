@@ -9,12 +9,12 @@ import "./global";
 import App from "./App";
 import { DEBUG } from "./config";
 import { Logger } from "./util/log";
-import { $getGlobal } from "./global/global.module";
+import { getGlobal } from "./global";
 
 DOM.render(<App />, document.getElementById("root")!);
 
 if (DEBUG) {
   document.addEventListener("dblclick", (e) => {
-    Logger.D($getGlobal());
+    Logger.D(getGlobal());
   });
 }

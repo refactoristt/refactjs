@@ -12,22 +12,23 @@ import {
   ActionOptions,
   ActionPayload,
   GLOBAL_DISPATCH_KEY,
-  GlobalContextType,
   GlobalProviderProps,
 } from "./global.types";
 import { $withGlobal } from "./global.hoc";
-import { INITIAL_STATE } from "./global.initial";
 
-let currentGlobal = INITIAL_STATE;
-const actionHandlers: Record<string, ActionHandler> = {};
+let currentGlobal = {};
+const actionHandlers: Record<string, ActionHandler<unknown>> = {};
 const actions: Record<string, ActionFunc> = {};
 
-const GlobalContext = createContext<GlobalContextType>(INITIAL_STATE);
+export const GlobalContext = createContext<unknown>({});
 
 export const GlobalProvider: <T extends Object>(
   props: GlobalProviderProps<T>
-) => React.ReactElement<GlobalProviderProps<T>> = ({ children }) => {
-  const [globalState, setGlobalState] = useState(INITIAL_STATE);
+) => React.ReactElement<GlobalProviderProps<T>> = ({
+  children,
+  initialState,
+}) => {
+  const [globalState, setGlobalState] = useState(initialState);
 
   const onDispatch = async ({
     detail: { action, payload },
@@ -41,12 +42,15 @@ export const GlobalProvider: <T extends Object>(
       reducerResult = await reducerResult;
     }
     if (reducerResult) {
-      setGlobalState(reducerResult);
-      currentGlobal = reducerResult;
+      setGlobalState(reducerResult as any);
+      currentGlobal = reducerResult as any;
     }
   };
   useEffect(() => {
-    document.addEventListener(GLOBAL_DISPATCH_KEY, onDispatch as AnyFunction);
+    document.addEventListener(
+      GLOBAL_DISPATCH_KEY,
+      onDispatch as unknown as () => void
+    );
 
     return () => {
       document.removeEventListener(GLOBAL_DISPATCH_KEY, () => {});
@@ -60,14 +64,14 @@ export const GlobalProvider: <T extends Object>(
   );
 };
 
-export const $useGlobalSelector = () => {
-  const theme = useContext(GlobalContext);
+export function $useGlobalSelector<T>(): T {
+  const global = useContext(GlobalContext);
 
-  if (!theme)
+  if (!global)
     throw new Error("You must use theme hook as a child of theme provider");
 
-  return theme;
-};
+  return global as T;
+}
 
 export function $getGlobal<T>() {
   return currentGlobal as T;
@@ -86,7 +90,7 @@ export const $dispatch = (action: string, payload: any) => {
 
 export const $addActionHandler = (
   actionName: string,
-  resolver: ActionHandler
+  resolver: ActionHandler<unknown>
 ) => {
   actionHandlers[actionName] = resolver;
   actions[actionName] = (payload?: ActionPayload, options?: ActionOptions) => {
@@ -104,7 +108,7 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
   type ActionHandlers = {
     [ActionName in keyof CombineActions]: (
       global: GLOBAL,
-      actions: Record<string, ActionHandler>,
+      actions: Record<string, ActionHandler<unknown>>,
       payload: CombineActions[ActionName]
     ) => GLOBAL | void | Promise<void>;
   };
@@ -121,7 +125,7 @@ export const typify = <GLOBAL, ACTIONS, UNTYPED_ACTIONS>() => {
     >(
       action: ActionName,
       resolver: ActionHandlers[ActionName]
-    ) => void,
+    ) => GLOBAL,
     useGlobal: $useGlobalSelector,
     dispatch: $dispatch,
     withGlobal: $withGlobal as unknown as <StateProps = any, OwnProps = any>(
