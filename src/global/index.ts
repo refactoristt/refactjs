@@ -1,4 +1,5 @@
-import { typify } from "../../actionman";
+import { typify } from "refactjs-actionman";
+import { $withGlobal } from "./global.hoc";
 
 export type GlobalState = {
   theme: string;
@@ -15,5 +16,5 @@ export const addActionHandler = typed.addActionHandler;
 export const useGlobal = typed.useGlobal;
 export const dispatch = typed.dispatch;
 export const getActions = typed.getActions;
-export const withGlobal = typed.withGlobal;
+export const withGlobal = $withGlobal;
 export const GlobalProvider = typed.GlobalProvider;

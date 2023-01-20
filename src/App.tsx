@@ -9,7 +9,7 @@ import "./global/actions/all";
 type StateProps = {};
 const App: FC<StateProps> = ({}) => {
   return (
-    <GlobalProvider<GlobalState> initialState={INITIAL_STATE}>
+    <GlobalProvider<GlobalState> debug initialState={INITIAL_STATE}>
       <RegisterAsync />;
     </GlobalProvider>
   );

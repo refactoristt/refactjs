@@ -11,18 +11,12 @@ export interface ApiLangString {
 }
 
 export type ApiLangPack = Record<string, ApiLangString>;
-import {
-  DEFAULT_LANG_CODE,
-  DEFAULT_LANG_PACK,
-  LANG_CACHE_NAME,
-  LANG_PACKS,
-} from "../config";
 import * as cacheApi from "./cacheApi";
-import { createCallbackManager } from "./callbacks";
+import { createCallbackManager } from "../src/util/callbacks";
 import { formatInteger } from "./textFormat";
 import { getActions, getGlobal } from "@global/index";
 
-interface LangFn {
+interface LangFn<LangCode> {
   (key: string, value?: any, format?: "i"): any;
 
   isRtl?: boolean;
@@ -60,11 +54,11 @@ export { addCallback, removeCallback };
 let currentLangCode: string | undefined;
 let currentTimeFormat: TimeFormat | undefined;
 
-export const getTranslation: LangFn = (
+export function getTranslation<T extends string>(
   key: string,
   value?: any,
   format?: "i"
-) => {
+): LangFn<T> {
   const lang = getGlobal().settings.byKey.language;
   if (value !== undefined) {
     const cacheValue = Array.isArray(value) ? JSON.stringify(value) : value;
@@ -90,7 +84,7 @@ export const getTranslation: LangFn = (
   }
 
   return processTranslation(langString, key, value, format);
-};
+}
 
 export async function getTranslationForLangString(
   langCode: string,
@@ -109,9 +103,9 @@ export async function getTranslationForLangString(
   return processTranslation(translateString, key);
 }
 
-export async function setLanguage(
+export async function setLanguage<LangCode extends string>(
   langCode: LangCode,
-  callback?: NoneToVoidFunction,
+  callback?: () => void,
   withFallback = false
 ) {
   getActions().changeSetting({
@@ -182,7 +176,7 @@ async function importFallbackLangPack() {
     return;
   }
 
-  fallbackLangPack = (await import("../translations/en")).default;
+  fallbackLangPack = (await import("../src/translations/en")).default;
   runCallbacks();
 }
 
@@ -198,7 +192,7 @@ async function fetchRemote(langCode: string): Promise<ApiLangPack | undefined> {
 }
 
 async function fetchRemoteString(
-  remoteLangPack: typeof LANG_PACKS[number],
+  remoteLangPack: (typeof LANG_PACKS)[number],
   langCode: string,
   key: string
 ): Promise<ApiLangString | undefined> {
